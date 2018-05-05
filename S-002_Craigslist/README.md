@@ -1,12 +1,4 @@
 # Reference: https://github.com/clickthisnick/CraigLister/blob/master/README.md
-b CraigLister Project. As mentioned in README.md file, we need to install following Dependencies :
-1. Python gmail Library
-2. Chromedriver
-3. Python Pillow Library
-4. Python selenium Library
-
-As discussed, we have launched an Amazon Linux Server. So we need to follow below steps :
-
 1. Install Python (sudo yum install python)
 2. Install python selenium Library (sudo pip install selenium)
 3. Install python gmail Library (sudo pip install gmail)
