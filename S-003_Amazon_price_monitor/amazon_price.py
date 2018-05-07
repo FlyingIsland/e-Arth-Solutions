@@ -88,8 +88,8 @@ def sendmail():
 	print(file_path)
 	try:
 		if(file_path):
-			fromaddr = "mahesh.s@e-arth.in"
-			toaddrs = ["himanshu@e-arth.in" , "mahesh.s@e-arth.in"]
+			fromaddr = ""
+			toaddrs = ["" , ""]
 			msg = MIMEMultipart()
 			msg['From'] = fromaddr
 			msg['To'] = ", ".join(toaddrs)
@@ -107,7 +107,7 @@ def sendmail():
 			server.ehlo()
 			server.starttls()
 			server.ehlo()
-			server.login("mahesh.s@e-arth.in", "mahesh_1711")
+			server.login("", "")
 			text = msg.as_string()
 			server.sendmail(fromaddr, toaddrs, text)
 			server.close()
