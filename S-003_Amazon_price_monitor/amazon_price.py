@@ -8,21 +8,14 @@ from email.mime.text import MIMEText
 import urllib.request
 from bs4 import BeautifulSoup
 import csv
-import datetime,sys
+import datetime,sys, os
 import requests
 from email import encoders
-
 import pymysql
-
-name = ''
-weight = ''
-package_dimensions = ''
-new_shipping_weight = ''
-file_path = ''
 
 def build_arg_parser():
 	parser = argparse.ArgumentParser(description='Script to learn basic argparse')
-	parser.add_argument("-asin","--asin", help="amazon asin",type=str, required='True')
+	# parser.add_argument("-asin","--asin", help="amazon asin",type=str, required='True')
 	parser.add_argument("-user","--user", help="DB user",type=str, required='True')
 	parser.add_argument("-host","--host", help="DB host",type=str, required='True')
 	parser.add_argument("-port","--port", help="DB port",type=str, required='True')
@@ -32,12 +25,12 @@ def build_arg_parser():
 
 	return vars(parser.parse_args())
 
-def product_page(asin, path):
-	global name
-	global weight
-	global package_dimensions
-	global new_shipping_weight
-	global file_path
+def product_page(asin):
+	name = ''
+	weight = ''
+	package_dimensions = ''
+	new_shipping_weight = ''
+	
 	product_url = 'https://www.amazon.com/dp/'+asin
 	uaHeader = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36'}
 	response = requests.get(product_url, headers=uaHeader)
@@ -62,47 +55,95 @@ def product_page(asin, path):
 				shipping_weight = cells[7].text.strip()
 				new_shipping_weight = re.sub(r'\(.*\)', '', shipping_weight)
 				print(new_shipping_weight)
-
+		
 		if(name and weight and package_dimensions and new_shipping_weight):
-			date_format = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-			print(date_format)
-			array = [{'Name' : name, 'Item Weight' : weight, 'Package Dimensions' : package_dimensions, 'Shipping Weight' : new_shipping_weight}]
-			file_path = path+'/Products_'+str(date_format)+'.csv'
-			# print(file_path)
-			with open(file_path, 'w') as csvFile:
-				fields = ['Name', 'Item Weight', 'Package Dimensions', 'Shipping Weight', 'Datetime']
-				writer = csv.DictWriter(csvFile, fieldnames=fields)
-				writer.writeheader()
-				writer.writerows(array)
-				csvFile.close()
-		else:
-			print('Something went wrong. Data not found')
-			return 0
+			sql_insert = "insert into product (asin, name, weight, package_dimensions, shipping_weight) values ('"+str(asin)+"', '"+str(name)+"', '"+str(weight)+"', '"+str(package_dimensions)+"', '"+str(new_shipping_weight)+"') ON DUPLICATE KEY UPDATE name  = values(name), weight = values(weight), package_dimensions = values(package_dimensions), shipping_weight = values(shipping_weight)"
+			print("Executing product Query")
+			print(cur.execute(sql_insert))
+			conn.commit()
+
+		offer_url = 'https://www.amazon.com/gp/offer-listing/'+asin
+		response_offer = requests.get(offer_url, headers=uaHeader)
+		print(response_offer)
+		html_offer = response_offer.content
+		soup_offer = BeautifulSoup(html_offer, 'html.parser')
+		data_list = []
+		a = 0
+		all_offers = []
+		for i in range(1,4):
+			final_price = 0
+			condition = ''
+			seller = ''
+			offer_data = []
+			row = []
+			count = 0
+			while(len(row) == 0):
+				if(count == 1000):
+					break
+				count = count + 1
+				a = a + 1
+				row = soup_offer.select("#olpOfferList > div > div > div:nth-of-type("+str(a)+") > div.a-column.a-span2.olpPriceColumn > span")
+			if(len(row)>0):
+				price = row[0].text.strip()
+				final_price = price.replace("$"," ")
+				row_condition = soup_offer.select("#olpOfferList > div > div > div:nth-of-type("+str(a)+") > div.a-column.a-span3.olpConditionColumn > div > span")
+				if(len(row_condition)>0):
+					condition = row_condition[0].text.strip()
+				
+				row_seller = soup_offer.select("#olpOfferList > div > div > div:nth-of-type("+str(a)+") > div.a-column.a-span2.olpSellerColumn > h3 > span > a")
+				
+				if(len(row_seller)>0):
+					seller = row_seller[0].text.strip()
+				else:
+					seller = "amazon"
+				
+				row_shipping = soup_offer.select("#olpOfferList > div > div > div:nth-of-type("+str(a)+") > div.a-column.a-span2.olpPriceColumn > p > span > span.olpShippingPrice")
+				
+				if(len(row_shipping)>0):
+					shipping = row_shipping[0].text.strip()
+					final_shipping = shipping.replace("$"," ")
+					final_price = float(final_price) + float(final_shipping)
+				
+				print(final_price)
+				print(condition)
+				print(seller)
+				
+				if(final_price and condition and seller):
+					sql_insert = "insert into offer (asin, rank, price_with_shipping, `condition`, seller) values ('"+str(asin)+"', '"+str(i)+"', '"+str(final_price).replace(" ", "")+"', '"+str(condition)+"', '"+str(seller)+"') ON DUPLICATE KEY UPDATE rank  = values(rank), price_with_shipping = values(price_with_shipping), `condition` = values(`condition`), seller = values(seller)"
+					# print(sql_insert)
+					print("Executing offer Query")
+					print(cur.execute(sql_insert))
+					conn.commit()
+					
+					offer_data = [asin, i, final_price, condition, seller]
+					all_offers.append(offer_data)
+		
+		print(all_offers)
 		return 1
 	except Exception as e:
 		print(str(e))
 		print('Something went wrong')
 		return 0
 
-def sendmail():
-	print(file_path)
+def sendmail(filenames):
 	try:
-		if(file_path):
+		if(len(filenames) > 0):
 			fromaddr = ""
 			toaddrs = ["" , ""]
 			msg = MIMEMultipart()
 			msg['From'] = fromaddr
 			msg['To'] = ", ".join(toaddrs)
-			msg['Subject'] = "Amazon Product Report"
-			body = "Hello, \n \nPlease find the amazon product report below: \n"
+			msg['Subject'] = "Amazon Product and Offer Report"
+			body = "Hello, \n \nPlease find the amazon product and offer report below: \n"
 			msg.attach(MIMEText(body, 'plain'))
-			filename = "Products.csv"
-			attachment = open(file_path, "rb")
-			part = MIMEBase('application', 'octet-stream')
-			part.set_payload((attachment).read())
-			encoders.encode_base64(part)
-			part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
-			msg.attach(part)
+			for filename in filenames:
+				attachment = open(filename, "rb")
+				part = MIMEBase('application', 'octet-stream')
+				part.set_payload((attachment).read())
+				encoders.encode_base64(part)
+				part.add_header('Content-Disposition', "attachment; filename= %s" % filename.split('/')[len(filename.split('/')) - 1])
+				msg.attach(part)
+			
 			server = smtplib.SMTP('smtp.gmail.com', 587)
 			server.ehlo()
 			server.starttls()
@@ -113,33 +154,91 @@ def sendmail():
 			server.close()
 			return 1
 		else:
-			print('Something went wrong while sending email.CSV file not found')
+			print('Something went wrong while sending email')
 			return 0
 	except Exception as e:
 		print(str(e))
-		print('Something went wrong while sending email')
+		print('Something went wrong while sending email 1')
 		return 0
 
 argments = build_arg_parser()
-product_data = product_page(argments['asin'], argments['path'])
-if(product_data):
-	try:
-		conn = pymysql.connect(user = str(argments['user']), port = int(argments['port']), database = argments['database'], host = argments['host'], password = argments['password'])
-		cur = conn.cursor()
 
-		if(name and weight and package_dimensions and new_shipping_weight):
-			sql_insert = "insert into product (asin, name, weight, package_dimensions, shipping_weight) values ('"+str(argments['asin'])+"', '"+str(name)+"', '"+str(weight)+"', '"+str(package_dimensions)+"', '"+str(new_shipping_weight)+"') ON DUPLICATE KEY UPDATE name  = values(name), weight = values(weight), package_dimensions = values(package_dimensions), shipping_weight = values(shipping_weight)"
-			print(cur.execute(sql_insert))
-			conn.commit()
-			cur.close()
-			conn.close()
-	except Exception as e:
-		print(str(e))
+try:
+	conn = pymysql.connect(user = str(argments['user']), port = int(argments['port']), database = argments['database'], host = argments['host'], password = argments['password'])
+	cur = conn.cursor()
+except Exception as e:
+	print(str(e))
+	sys.exit()
 
-	send_mail = sendmail()
-	print(send_mail)
-	if(send_mail == 1):
-		print('Send Email successfully')
+asin_query = "select distinct asin from product where active = 1"
+cur.execute(asin_query)
+result = cur.fetchall()
+if(cur.rowcount > 0):
+	for asin in result:
+		asin_amazon = asin[0]
+		print(asin_amazon)
+		product_data = product_page(str(asin_amazon))
 
+	# try:
+	path = argments['path']
+	date_format = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+	file_path_product = path+'/Products_'+str(date_format)+'.csv'
+	file_path_offer = path+'/Offer_'+str(date_format)+'.csv'
+	
+	select_query = "select asin, name, weight, package_dimensions, shipping_weight, `condition`, active, updated from product"
+	cur.execute(select_query)
+	product_result = cur.fetchall()
+	all_data = []
+	if(cur.rowcount > 0):
+		
+		for product in product_result:
+			internal_data = []
+			internal_data.append(product[0])
+			internal_data.append(product[1])
+			internal_data.append(product[2])
+			internal_data.append(product[3])
+			internal_data.append(product[4])
+			internal_data.append(product[5])
+			internal_data.append(product[6])
+			internal_data.append(product[7])
 
+			all_data.append(internal_data)
+
+	with open(file_path_product, 'w') as csvFile:
+		fields = ["asin", "name", "weight", "package_dimensions", "shipping_weight", "condition", "active", "updated"]
+		writer = csv.writer(csvFile, delimiter=',',quoting=csv.QUOTE_ALL)
+		writer.writerow(fields)
+		for row in all_data:
+			writer.writerow(row)
+		csvFile.close()
+
+	select_query = "select asin, rank, price_with_shipping, `condition`, seller, updated from offer"
+	cur.execute(select_query)
+	offer_result = cur.fetchall()
+	all_data = []
+	if(cur.rowcount > 0):
+		
+		for offer in offer_result:
+			internal_data = []
+			internal_data.append(offer[0])
+			internal_data.append(offer[1])
+			internal_data.append(offer[2])
+			internal_data.append(offer[3])
+			internal_data.append(offer[4])
+			internal_data.append(offer[5])
+
+			all_data.append(internal_data)
+
+	with open(file_path_offer, 'w') as csvFile:
+		fields = ["asin", "rank", "price_with_shipping", "condition", "seller", "updated"]
+		writer = csv.writer(csvFile, delimiter=',',quoting=csv.QUOTE_ALL)
+		writer.writerow(fields)
+		for row in all_data:
+			writer.writerow(row)
+		csvFile.close()		
+	if(os.path.exists(file_path_product) and os.path.exists(file_path_offer)):
+		sendmail([file_path_product, file_path_offer])
+	# except Exception as e:
+	# 	print("Something went wrong while creating csv and send email")
+	# 	print(str(e))
 
