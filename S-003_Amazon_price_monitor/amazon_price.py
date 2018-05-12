@@ -128,8 +128,8 @@ def product_page(asin):
 def sendmail(filenames):
 	try:
 		if(len(filenames) > 0):
-			fromaddr = ""
-			toaddrs = ["" , ""]
+			fromaddr = "mahesh.s@e-arth.in"
+			toaddrs = ["mahesh.s@e-arth.in" , "himanshu@e-arth.in"]
 			msg = MIMEMultipart()
 			msg['From'] = fromaddr
 			msg['To'] = ", ".join(toaddrs)
@@ -148,7 +148,7 @@ def sendmail(filenames):
 			server.ehlo()
 			server.starttls()
 			server.ehlo()
-			server.login("", "")
+			server.login("mahesh.s@e-arth.in", "TBD")
 			text = msg.as_string()
 			server.sendmail(fromaddr, toaddrs, text)
 			server.close()
