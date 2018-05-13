@@ -1,0 +1,10 @@
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=chantilly" | grep -Eo 'LocCde.*'
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=chantilly&offset=20" | grep -Eo 'LocCde.*'
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=chantilly&offset=40" | grep -Eo 'LocCde.*'
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=herndon" | grep -Eo 'LocCde.*'
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=herndon&offset=20" | grep -Eo 'LocCde.*'
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=herndon&offset=40" | grep -Eo 'LocCde.*'
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=reston" | grep -Eo 'LocCde.*'
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=reston&offset=20" | grep -Eo 'LocCde.*'
+curl "http://parktakes.fairfaxcounty.gov/rev1_locresult.asp?addrtext=reston&offset=40" | grep -Eo 'LocCde.*'
+
