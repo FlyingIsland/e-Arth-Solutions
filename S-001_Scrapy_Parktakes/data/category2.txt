@@ -1,0 +1,95 @@
+"9999"
+"ADAP++"
+"AQUA++"
+"CAMP++"
+"CAMPX+"
+"TOTS++"
+"DANCE+"
+"EQUEST"
+"EVNT++"+
+"EXER++"
+"STEW-F"
+"FINE++"
+"STEW-G"
+"GCLASS"
+"STEW-H"
+"ICE+++"
+"MART++"
+"STEW-N"
+"OUTDOR"
+"PERF++"
+"PETS++"
+"RECPAC"+
+"NATURE"
+"SCOUT+"
+"STEW-E"
+"STEW-S"
+"SPOR++"
+"TRIP++"
+"XTRA++"
+
+
+<select name="category2" title="Select Category" size="1">
+                
+                <option value="9999">Select a Category</option>
+                
+               <option value="ADAP  ">ADAPTED RECREATION SERVICES                </option>
+                
+                <option value="AQUA  ">AQUATICS                                </option>
+                
+                 
+                <option value="CAMP  ">CAMPS                                   </option>
+                
+             <option value="CAMPX ">CAMPS - EXTENDED CARE PROGRAMS          </option> 
+                
+                <option value="TOTS  ">CHILDREN'S CORNER                       </option>
+                
+                <option value="DANCE ">DANCE                                   </option>
+                
+                <option value="EQUEST">EQUESTRIAN                              </option>
+                <!--check this - sometimes a program gets coded with this rather than one of the others. not good for the visitor to distinguish between events and special events. Request to have it changed.
+                <option value="EVNT  " >EVENTS                               </option>     -->
+                 
+                <option value="EXER  ">EXERCISE AND PHYSICAL FITNESS           </option>
+                          
+                
+                <option value="STEW-F">FARM                       </option>
+                
+                <option value="FINE  ">FINE ARTS                               </option>
+                
+                <option value="STEW-G">GARDENING                    </option>
+                
+                <!--  --><option value="GCLASS">GOLF       </option>
+                
+                  <option value="STEW-H">HISTORY                    </option>
+                
+                <option value="ICE   ">ICE SKATING                             </option>
+                
+                <option value="MART  ">MARTIAL ARTS                            </option>
+                
+                        
+                
+                <option value="STEW-N">NATURE (single day)                 </option>
+                <option value="OUTDOR">OUTDOOR RECREATION                      </option>
+                
+                <option value="PERF  ">PERFORMING ARTS                         </option>
+                
+                <option value="PETS  ">PET PLACE                               </option>
+                
+                <!--check this <option value="RECPAC" >RECPAC PROGRAMS                         </option>  --> 
+                <option value="NATURE">SCIENCE, TECHNOLOGY, NATURE (series)                                  </option>             
+                              
+                <option value="SCOUT ">SCOUTS                                  </option>
+                
+                <option value="STEW-E">SPECIAL EVENTS                      </option>
+                 <option value="STEW-S">SPECIAL TOURS                        </option>
+                  
+                <option value="SPOR  ">SPORTS, TOURNAMENTS, LEAGUES  </option>
+                
+                <option value="TRIP  ">TRIPS, TOURS AND ADVENTURES             </option>
+                
+                <option value="XTRA  ">XTRAS                                   </option>
+                
+            
+
+              </select>

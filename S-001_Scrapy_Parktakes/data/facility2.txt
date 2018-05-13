@@ -1,0 +1,121 @@
+9999,Select a Facility
+R300,Annandale High School
+R003,Armstrong Elementary School
+C183,Audrey Moore RECenter
+R587,Bach to Rock McLean
+R588,Back to Rock Herndon
+R520,Black Belt Academy Fairfax
+R008,Bonnie Brae Elementary School
+D715,Brookfield Park
+R013,Bull Run Elementary School
+R544,Bull Run Park
+G421,Burke Lake Golf Course
+B819,Burke Lake Park
+R014,Bush Hill Elementary School
+R018,Cardinal Forest Elementary School
+R301,Centreville High School
+D703,Chalet Woods Park
+R302,Chantilly High School
+R023,Churchill Road Elementary School
+M561,Clark House
+B855,Clemyjontri
+R138,Colin Powell Elementary
+D711,Collingwood Park
+R027,Columbia Elementary School
+R135,Colvin Run Elementary
+M266,Colvin Run Mill
+R030,Cub Run Elementary School
+C192,Cub Run RECenter
+R032,Deer Park Elementary School
+M556,Dranesville Tavern
+R303,Edison High School
+M274,Ellanor C. Lawrence Park
+R416,Fairfax County Government Center
+R410,Fairfax Fencers
+R411,Fairfax Ice Arena
+R036,Fairhill Elementary School
+R305,Falls Church High School
+R044,Fort Hunt Elementary School
+R046,Franconia Elementary School
+R047,Franklin Sherman Elementary School
+R204,Frost Middle School
+M282,Frying Pan Park
+C449,George Washington RECenter
+M557,Great Falls Grange
+M290,Green Spring Gardens Park
+R054,Greenbriar East Elementary School
+R540,Greenbriar Park
+R055,Greenbriar West Elementary School
+R059,Haycock Elementary School
+R060,Hayfield Elementary School
+M308,Hidden Oaks Nature Center
+M332,Hidden Pond Nature Center
+M578,Historic Huntley
+R207,Holmes Middle School
+M563,Hunter House
+M340,Huntley Meadows Park
+R209,Irving Middle School
+R136,Island Creek Elementary
+G488,Jefferson Golf Course
+R507,Jhoon Rhee Falls Church
+R068,Keene Mill Elementary School
+R589,Kelly Square
+R071,Kings Park Elementary School
+B850,Lake Accotink Park
+R072,Lake Ann Elementary School
+B835,Lake Fairfax Park
+R074,Laurel Ridge Elementary School
+R533,Lead By Example Fair Oaks
+C456,Lee District RECenter
+R314,Lee High School
+R485,Lucia Farms Equestrian
+R315,Madison High School
+R330,Marshall High School
+M577,Mason District Park
+D716,Mclean Central Park
+R084,Mosby Woods Elementary School
+C472,Mount Vernon RECenter
+R087,Navy Elementary School
+R566,Northern Va Therapeutic Riding Program
+R480,Northern Virginia Wushu Academy
+D701,Nottoway Park
+R590,NOVA Fencing Club
+C142,Oak Marr RECenter
+R091,Oak View Elementary School
+R092,Oakton Elementary School
+R094,Orange Hunt Elementary School
+R095,Parklawn Elementary School
+G512,Pinecrest Golf Course
+R097,Poplar Tree Elementary School
+C159,Providence RECenter
+R457,Reston Conservatory
+M357,Riverbend Park
+R320,Robinson Secondary School
+R101,Rose Hill Elementary School
+M576,Roundtree Park
+M584,Royal Lake Park
+R102,Sangster Elementary School
+R591,Science Cosmos
+R104,Shrevewood Elementary School
+R105,Silverbrook Elementary School
+R106,Sleepy Hollow Elementary School
+C167,South Run RECenter
+R107,Spring Hill Elementary School
+C175,Spring Hill RECenter
+R108,Springfield Estates Elementary School
+R109,Stenwood Elementary School
+R548,Sterner's Tae Kwon Do Academy
+M381,Sully
+R112,Terra Centre Elementary School
+R465,The Dance Company
+R316,Tours
+D705,Turner Farm Park
+G546,Twin Lakes Golf Course
+R468,VA Academy of Fencing
+R117,Virginia Run Elementary School
+R118,Wakefield Forest Elementary School
+R119,Waples Mill Elementary School
+R122,West Springfield Elementary School
+R127,Weyanoke Elementary School
+R131,Woodburn Elementary School
+R329,Woodson High School
