@@ -1,16 +1,28 @@
 import xml.etree.ElementTree as ET
 import argparse
+import requests
+import datetime
+import os
 
 def build_arg_parser():
 	parser = argparse.ArgumentParser(description='Script to learn basic argparse')
-	parser.add_argument("-path","--path", help="path of the xml file",type=str, required='True')
+	parser.add_argument("-url","--url", help="url of the xml",type=str, required='True')
 	parser.add_argument("-year","--year", help="year to search",type=str, required='True')
 	return vars(parser.parse_args())
 
 argments = build_arg_parser()
 
-file_path = argments['path']
+file_url = argments['url']
 year = argments['year']
+
+xmlgot = requests.get(file_url).text
+
+timenow = str(datetime.datetime.now().strftime('%H%M%S'))
+file_path = '/tmp/file_'+str(timenow)+'.xml'
+
+f = open(file_path, 'w')
+f.write(str(xmlgot))
+f.close()
 
 tree=ET.parse(file_path)
 root=tree.getroot()
@@ -32,3 +44,4 @@ except Exception as e:
 	print(e)
 	print('Something went wrong')
 
+os.remove(file_path)

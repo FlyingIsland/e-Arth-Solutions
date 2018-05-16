@@ -22,6 +22,7 @@ def build_arg_parser():
 	parser.add_argument("-password","--password", help="DB password",type=str, required='True')
 	parser.add_argument("-database","--database", help="DB name",type=str, required='True')
 	parser.add_argument("-path","--path", help="path to save csv",type=str, required='True')
+	parser.add_argument("-i","--interval", help="time internal after each request",type=int, default=5)
 
 	return vars(parser.parse_args())
 
@@ -177,6 +178,7 @@ if(cur.rowcount > 0):
 	for asin in result:
 		asin_amazon = asin[0]
 		print(asin_amazon)
+		time.sleep(int(argments['interval']))
 		product_data = product_page(str(asin_amazon))
 
 	# try:

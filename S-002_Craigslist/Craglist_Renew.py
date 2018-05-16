@@ -6,13 +6,18 @@ import time
 import os
 from os.path import abspath
 
+import smtplib
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 # Will need to uncomment this 3 lines will running on server
 
-# from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 
 
-# display = Display(visible=0, size=(1024, 768))
-# display.start()
+display = Display(visible=0, size=(1024, 768))
+display.start()
 
 # Email Id and password of Craiglist Account
 email_id = ''
@@ -67,6 +72,8 @@ flag = 0
 max_count = 0
 renew_done = 0
 
+postings_renewed = []
+
 while(count != 0 or max_count == 1000):
 	max_count += 1
 	driver.get("https://accounts.craigslist.org/login/home")
@@ -92,8 +99,14 @@ while(count != 0 or max_count == 1000):
 							get_value = input_in_forms.get_attribute("value")
 							# if(str(get_value) == "renew" and str(get_type) == "submit"):								
 							if(str(get_value) == "renew" and str(get_type) == "submit"):
-								input_in_forms.click()
-								# print(input_in_forms.get_attribute("value"))
+								#input_in_forms.click()
+								index = table_rows.find_elements_by_tag_name("td").index(table_data) + 1
+								title_element = table_rows.find_elements_by_tag_name("td")[index]
+								if(title_element):
+									posting = title_element.find_element_by_tag_name('a').text
+									if(posting):
+										postings_renewed.append(posting)
+								print(input_in_forms.get_attribute("value"))
 								count = count - 1
 								renew_done += 1
 								time.sleep(3)
@@ -104,3 +117,34 @@ while(count != 0 or max_count == 1000):
 
 print("Total Renew done : "+str(renew_done))
 driver.close()
+
+try:
+	if(len(postings_renewed) > 0):
+		fromaddr = ""
+		toaddrs = ["" , ""]
+		msg = MIMEMultipart()
+		msg['From'] = fromaddr
+		msg['To'] = ", ".join(toaddrs)
+		msg['Subject'] = "CragList Posting Renewed"
+		body = "Hello, <br><br>Please find the list of posting title renewd below: <br>"
+		count_r = 0
+		for post in postings_renewed:
+			count_r = count_r + 1
+			body += str(count_r)+". "+post+ "<br>"
+
+		msg.attach(MIMEText(body, 'html'))
+
+		server = smtplib.SMTP('smtp.gmail.com', 587)
+		server.ehlo()
+		server.starttls()
+		server.ehlo()
+		server.login("", "")
+		text = msg.as_string()
+		server.sendmail(fromaddr, toaddrs, text)
+		server.close()
+	else:
+		print('Email')
+except Exception as e:
+	print(str(e))
+	print('Something went wrong while sending email 1')
+
