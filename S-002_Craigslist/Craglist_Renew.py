@@ -126,7 +126,7 @@ try:
 		msg['From'] = fromaddr
 		msg['To'] = ", ".join(toaddrs)
 		msg['Subject'] = "CragList Posting Renewed"
-		body = "Hello, <br><br>Please find the list of posting title renewd below: <br>"
+		body = "Hello, <br><br>Please find the list of posting title renewed below: <br>"
 		count_r = 0
 		for post in postings_renewed:
 			count_r = count_r + 1
