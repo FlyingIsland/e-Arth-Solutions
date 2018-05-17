@@ -149,7 +149,7 @@ def sendmail(filenames):
 			server.ehlo()
 			server.starttls()
 			server.ehlo()
-			server.login("mahesh.s@e-arth.in", "TBD")
+			server.login("mahesh.s@e-arth.in", "mahesh_1711")
 			text = msg.as_string()
 			server.sendmail(fromaddr, toaddrs, text)
 			server.close()
@@ -184,10 +184,11 @@ if(cur.rowcount > 0):
 	# try:
 	path = argments['path']
 	date_format = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-	file_path_product = path+'/Products_'+str(date_format)+'.csv'
-	file_path_offer = path+'/Offer_'+str(date_format)+'.csv'
+	file_path_product = path+'/Amazonprices_'+str(date_format)+'.csv'
+	#file_path_offer = path+'/Offer_'+str(date_format)+'.csv'
 	
-	select_query = "select asin, name, weight, package_dimensions, shipping_weight, `condition`, active, updated from product"
+	#select_query = "select asin, name, weight, package_dimensions, shipping_weight, `condition`, active, updated from product"
+	select_query = "select product.asin, product.name, product.weight, product.package_dimensions, product.shipping_weight, product.condition, product.active, product.updated, offer.asin, offer.rank, offer.price_with_shipping, offer.condition, offer.seller, offer.updated from product inner join offer on product.asin = offer.asin"
 	cur.execute(select_query)
 	product_result = cur.fetchall()
 	all_data = []
@@ -203,43 +204,23 @@ if(cur.rowcount > 0):
 			internal_data.append(product[5])
 			internal_data.append(product[6])
 			internal_data.append(product[7])
-
+			internal_data.append(product[9])
+			internal_data.append(product[10])
+			internal_data.append(product[11])
+			internal_data.append(product[12])
+			internal_data.append(product[13])
 			all_data.append(internal_data)
 
 	with open(file_path_product, 'w') as csvFile:
-		fields = ["asin", "name", "weight", "package_dimensions", "shipping_weight", "condition", "active", "updated"]
+		fields = ["asin", "name", "weight", "package_dimensions", "shipping_weight", "condition", "active", "updated" , "rank", "price_with_shipping", "condition", "seller", "updated"]
 		writer = csv.writer(csvFile, delimiter=',',quoting=csv.QUOTE_ALL)
 		writer.writerow(fields)
 		for row in all_data:
 			writer.writerow(row)
 		csvFile.close()
 
-	select_query = "select asin, rank, price_with_shipping, `condition`, seller, updated from offer"
-	cur.execute(select_query)
-	offer_result = cur.fetchall()
-	all_data = []
-	if(cur.rowcount > 0):
-		
-		for offer in offer_result:
-			internal_data = []
-			internal_data.append(offer[0])
-			internal_data.append(offer[1])
-			internal_data.append(offer[2])
-			internal_data.append(offer[3])
-			internal_data.append(offer[4])
-			internal_data.append(offer[5])
-
-			all_data.append(internal_data)
-
-	with open(file_path_offer, 'w') as csvFile:
-		fields = ["asin", "rank", "price_with_shipping", "condition", "seller", "updated"]
-		writer = csv.writer(csvFile, delimiter=',',quoting=csv.QUOTE_ALL)
-		writer.writerow(fields)
-		for row in all_data:
-			writer.writerow(row)
-		csvFile.close()		
-	if(os.path.exists(file_path_product) and os.path.exists(file_path_offer)):
-		sendmail([file_path_product, file_path_offer])
+	if(os.path.exists(file_path_product)):
+		sendmail([file_path_product])
 	# except Exception as e:
 	# 	print("Something went wrong while creating csv and send email")
 	# 	print(str(e))
