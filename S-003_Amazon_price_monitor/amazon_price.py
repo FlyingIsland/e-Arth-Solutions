@@ -149,7 +149,7 @@ def sendmail(filenames):
 			server.ehlo()
 			server.starttls()
 			server.ehlo()
-			server.login("mahesh.s@e-arth.in", "mahesh_1711")
+			server.login("mahesh.s@e-arth.in", "")
 			text = msg.as_string()
 			server.sendmail(fromaddr, toaddrs, text)
 			server.close()
