@@ -15,5 +15,5 @@ chromedriver = file_dir + "/chromedriver"
 os.environ["webdriver.chrome.driver"] = chromedriver
 
 driver = webdriver.Chrome(chromedriver)
-driver.get("http://www.google.com")
+driver.get("http://delve.tech/ip")
 driver.close()
