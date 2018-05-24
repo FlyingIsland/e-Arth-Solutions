@@ -40,28 +40,31 @@ def product_page(asin):
 	soup = BeautifulSoup(html, 'html.parser')
 	data_list = []
 	try:
-		elem1 = soup.find('span', attrs={'class': 'a-size-large'})
+		elem1 = soup.find('span', attrs={'id': 'productTitle'})
 		name = elem1.text.strip()
-		print(name)
-		for table_row in soup.select("#prodDetails > div.wrapper.USlocale > div.column.col1 > div > div.content.pdClearfix > div > div > table"):
-			cells = table_row.findAll('td')
-			if len(cells) > 0:
-				weight = cells[1].text.strip()
-				print(weight)
-				package_dimensions = cells[3].text.strip()
-				print(package_dimensions)
-		for table_row1 in soup.select("#prodDetails > div.wrapper.USlocale > div.column.col2 > div:nth-of-type(1) > div.content.pdClearfix > div > div > table"):
-			cells = table_row1.findAll('td')
-			if len(cells) > 0:
-				shipping_weight = cells[7].text.strip()
-				new_shipping_weight = re.sub(r'\(.*\)', '', shipping_weight)
-				print(new_shipping_weight)
-		
-		if(name and weight and package_dimensions and new_shipping_weight):
-			sql_insert = "insert into product (asin, name, weight, package_dimensions, shipping_weight) values ('"+str(asin)+"', '"+str(name)+"', '"+str(weight)+"', '"+str(package_dimensions)+"', '"+str(new_shipping_weight)+"') ON DUPLICATE KEY UPDATE name  = values(name), weight = values(weight), package_dimensions = values(package_dimensions), shipping_weight = values(shipping_weight)"
-			print("Executing product Query")
-			print(cur.execute(sql_insert))
-			conn.commit()
+
+		if (soup.find(lambda tag:tag.name=="table" and "Item Weight" in tag.text)):
+			elem2 = soup.find(lambda tag:tag.name=="tr" and "Item Weight" in tag.text)
+			weight = elem2.text.strip().replace('Item Weight', '').replace('\n','').strip(' ')
+
+		if (soup.find(lambda tag:tag.name=="table" and "Package Dimensions" in tag.text)):
+			elem1 = soup.find(lambda tag:tag.name=="tr" and "Package Dimensions" in tag.text)
+			package_dimensions = elem1.text.strip().replace('Package Dimensions', '').replace('\n','').strip(' ')
+
+		elif (soup.find(lambda tag:tag.name=="table" and "Product Dimensions" in tag.text)):
+			elem1 = soup.find(lambda tag:tag.name=="tr" and "Product Dimensions" in tag.text)
+			package_dimensions = elem1.text.strip().replace('Product Dimensions', '').replace('\n','').strip(' ')
+
+		if (soup.find(lambda tag:tag.name=="table" and "Shipping Weight" in tag.text)):
+			elem1 = soup.find(lambda tag:tag.name=="tr" and "Shipping Weight" in tag.text)
+			shipping_weight = elem1.text.strip().replace('Shipping Weight', '')
+			new_shipping_weight = re.sub(r'\(.*\)', '', shipping_weight).replace('\n','').strip(' ')
+			
+		# if(name and weight and package_dimensions and new_shipping_weight):
+		sql_insert = "insert into product (asin, name, weight, package_dimensions, shipping_weight) values ('"+str(asin)+"', '"+str(name)+"', '"+str(weight)+"', '"+str(package_dimensions)+"', '"+str(new_shipping_weight)+"') ON DUPLICATE KEY UPDATE name  = values(name), weight = values(weight), package_dimensions = values(package_dimensions), shipping_weight = values(shipping_weight)"
+		print("Executing product Query")
+		print(cur.execute(sql_insert))
+		conn.commit()
 
 		offer_url = 'https://www.amazon.com/gp/offer-listing/'+asin
 		response_offer = requests.get(offer_url, headers=uaHeader)
@@ -118,12 +121,12 @@ def product_page(asin):
 					
 					offer_data = [asin, i, final_price, condition, seller]
 					all_offers.append(offer_data)
-		
+
 		print(all_offers)
 		return 1
 	except Exception as e:
 		print(str(e))
-		print('Something went wrong')
+		print('Something went wrong1')
 		return 0
 
 def sendmail(filenames):
@@ -224,4 +227,3 @@ if(cur.rowcount > 0):
 	# except Exception as e:
 	# 	print("Something went wrong while creating csv and send email")
 	# 	print(str(e))
-
