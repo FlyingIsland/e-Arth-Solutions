@@ -133,7 +133,7 @@ while(count != 0 or max_count == 1000):
 
 print("Total Renew done : "+str(renew_done))
 driver.close()
-'''
+
 try:
         if(len(postings_renewed) > 0):
                 fromaddr = ""
@@ -150,20 +150,20 @@ try:
 
                 msg.attach(MIMEText(body, 'html'))
 
-                server = smtplib.SMTP('smtp.gmail.com', 587)
-                server.ehlo()
-                server.starttls()
-                server.ehlo()
-                server.login("", "")
+                server = smtplib.SMTP('localhost')
+#                server.ehlo()
+#                server.starttls()
+#                server.ehlo()
+#                server.login("", "")
                 text = msg.as_string()
                 server.sendmail(fromaddr, toaddrs, text)
                 server.close()
         else:
-                print('Email')
+                print('No Posting Renewed')
 except Exception as e:
         print(str(e))
-        print('Something went wrong while sending email 1')
-'''
+        print('Something went wrong while sending email')
+
 for eachp in os.popen("ps ax | grep chromedriver | grep -v grep"):
 	pids = eachp.split()[0]
 	os.kill(int(pids), signal.SIGKILL)

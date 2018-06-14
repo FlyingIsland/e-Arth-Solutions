@@ -132,8 +132,8 @@ def product_page(asin):
 def sendmail(filenames):
 	try:
 		if(len(filenames) > 0):
-			fromaddr = "mahesh.s@e-arth.in"
-			toaddrs = ["mahesh.s@e-arth.in" , "himanshu@e-arth.in"]
+			fromaddr = ""
+			toaddrs = ["" , ""]
 			msg = MIMEMultipart()
 			msg['From'] = fromaddr
 			msg['To'] = ", ".join(toaddrs)
@@ -148,11 +148,11 @@ def sendmail(filenames):
 				part.add_header('Content-Disposition', "attachment; filename= %s" % filename.split('/')[len(filename.split('/')) - 1])
 				msg.attach(part)
 			
-			server = smtplib.SMTP('smtp.gmail.com', 587)
-			server.ehlo()
-			server.starttls()
-			server.ehlo()
-			server.login("mahesh.s@e-arth.in", "")
+			server = smtplib.SMTP('localhost')
+#			server.ehlo()
+#			server.starttls()
+#			server.ehlo()
+#			server.login("mahesh.s@e-arth.in", "")
 			text = msg.as_string()
 			server.sendmail(fromaddr, toaddrs, text)
 			server.close()
