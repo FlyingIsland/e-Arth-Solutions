@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.21, for Linux (x86_64)
 -- ------------------------------------------------------
--- Server version	5.7.21
+-- Server version 5.7.21
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -64,10 +64,11 @@ CREATE TABLE `transaction` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `account` int(10) unsigned NOT NULL,
   `date` datetime NOT NULL,
-  `amount` decimal(10,0) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
   `description` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `unique_index` (`account`,`date`,`amount`,`description`),
   KEY `transaction_account_idx` (`account`),
   CONSTRAINT `transaction_account` FOREIGN KEY (`account`) REFERENCES `account` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
