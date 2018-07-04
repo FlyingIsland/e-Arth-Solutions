@@ -222,8 +222,8 @@ if(cur.rowcount > 0):
 			writer.writerow(row)
 		csvFile.close()
 
-	if(os.path.exists(file_path_product)):
-		sendmail([file_path_product])
+	#if(os.path.exists(file_path_product)):
+	#	sendmail([file_path_product])
 	# except Exception as e:
 	# 	print("Something went wrong while creating csv and send email")
 	# 	print(str(e))
