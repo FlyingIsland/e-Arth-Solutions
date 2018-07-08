@@ -45,18 +45,35 @@ def product_page(asin):
 
 		if (soup.find(lambda tag:tag.name=="table" and "Item Weight" in tag.text)):
 			elem2 = soup.find(lambda tag:tag.name=="tr" and "Item Weight" in tag.text)
+			if(elem2.find(lambda tag:tag.name=="li" and "Item Weight" in tag.text)):
+				elem2 = elem2.find(lambda tag:tag.name=="li" and "Item Weight" in tag.text)
+			if(elem2.a):
+				elem2.a.decompose()
 			weight = elem2.text.strip().replace('Item Weight', '').replace('\n','').strip(' ')
 
 		if (soup.find(lambda tag:tag.name=="table" and "Package Dimensions" in tag.text)):
 			elem1 = soup.find(lambda tag:tag.name=="tr" and "Package Dimensions" in tag.text)
+			if(elem1.find(lambda tag:tag.name=="li" and "Package Dimensions" in tag.text)):
+				elem1 = elem1.find(lambda tag:tag.name=="li" and "Package Dimensions" in tag.text)
+			if(elem1.a):
+				elem1.a.decompose()
 			package_dimensions = elem1.text.strip().replace('Package Dimensions', '').replace('\n','').strip(' ')
-
+			
 		elif (soup.find(lambda tag:tag.name=="table" and "Product Dimensions" in tag.text)):
 			elem1 = soup.find(lambda tag:tag.name=="tr" and "Product Dimensions" in tag.text)
+			if(elem1.find(lambda tag:tag.name=="li" and "Product Dimensions" in tag.text)):
+				elem1 = elem1.find(lambda tag:tag.name=="li" and "Product Dimensions" in tag.text)
+			if(elem1.a):
+				elem1.a.decompose()
 			package_dimensions = elem1.text.strip().replace('Product Dimensions', '').replace('\n','').strip(' ')
 
 		if (soup.find(lambda tag:tag.name=="table" and "Shipping Weight" in tag.text)):
 			elem1 = soup.find(lambda tag:tag.name=="tr" and "Shipping Weight" in tag.text)
+			if(elem1.find(lambda tag:tag.name=="li" and "Shipping Weight" in tag.text)):
+				elem1 = elem1.find(lambda tag:tag.name=="li" and "Shipping Weight" in tag.text)
+			if(elem1.a):
+				elem1.a.decompose()
+       
 			shipping_weight = elem1.text.strip().replace('Shipping Weight', '')
 			new_shipping_weight = re.sub(r'\(.*\)', '', shipping_weight).replace('\n','').strip(' ')
 			
@@ -113,7 +130,7 @@ def product_page(asin):
 				print(seller)
 				
 				if(final_price and condition and seller):
-					sql_insert = "insert into offer (asin, rank, price_with_shipping, `condition`, seller) values ('"+str(asin)+"', '"+str(i)+"', '"+str(final_price).replace(" ", "")+"', '"+str(condition)+"', '"+str(seller)+"') ON DUPLICATE KEY UPDATE rank  = values(rank), price_with_shipping = values(price_with_shipping), `condition` = values(`condition`), seller = values(seller)"
+					sql_insert = "insert into offer (asin, rank, price_with_shipping, `condition`, seller) values ('"+str(asin)+"', '"+str(i)+"', '"+str(final_price).replace(" ", "")+"', '"+str(condition).replace("'","")+"', '"+str(seller).replace("'","")+"') ON DUPLICATE KEY UPDATE rank  = values(rank), price_with_shipping = values(price_with_shipping), `condition` = values(`condition`), seller = values(seller)"
 					# print(sql_insert)
 					print("Executing offer Query")
 					print(cur.execute(sql_insert))
@@ -168,7 +185,7 @@ def sendmail(filenames):
 argments = build_arg_parser()
 
 try:
-	conn = pymysql.connect(user = str(argments['user']), port = int(argments['port']), database = argments['database'], host = argments['host'], password = argments['password'])
+	conn = pymysql.connect(user = str(argments['user']), port = int(argments['port']), database = argments['database'], host = argments['host'], password = argments['password'], charset="utf8")
 	cur = conn.cursor()
 except Exception as e:
 	print(str(e))
