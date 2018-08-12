@@ -1,5 +1,5 @@
 Running the script :
-python3 greatschools.py -url https://www.greatschools.org/schools/cities/California/CA/ -user root -host localhost -port 3306 -password S0lutions! -database greatschools -interval 5
+python3 greatschools.py -url https://www.greatschools.org/schools/cities/California/CA/ -user root -host localhost -port 3306 -password TBD -database greatschools -interval 5
 
 Other info :
 -interval parameter is of number od seconds to wailt after each request
