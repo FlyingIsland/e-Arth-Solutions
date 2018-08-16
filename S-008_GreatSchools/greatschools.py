@@ -29,7 +29,7 @@ except Exception as e:
 	print("Could not connect to Database")
 	sys.exit()
 print("Starting Data extraction for the State and Cities")
-states_url = []
+
 base_url = 'https://www.greatschools.org'
 first_state_url = arguments['url']
 states_url.append(first_state_url)
