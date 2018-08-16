@@ -6,4 +6,4 @@ Other info :
 
 The schema.sql under sql folder will create a database schema "greatschools" and create two tables "city" and "school". So while importing the sql file no need to specify the database schema name.
 
-
+update city set list_school = 1 where city_url = 'https://www.greatschools.org/california/agoura-hills/';
