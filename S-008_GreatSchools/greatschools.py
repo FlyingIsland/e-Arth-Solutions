@@ -30,6 +30,7 @@ except Exception as e:
 	sys.exit()
 print("Starting Data extraction for the State and Cities")
 
+states_url = []
 base_url = 'https://www.greatschools.org'
 first_state_url = arguments['url']
 states_url.append(first_state_url)
@@ -47,7 +48,7 @@ if(drop_down):
 			start_from = start + 7
 			complete_url = base_url + str(each_option)[start_from:end_to]
 			states_url.append(complete_url)
-states_url = []
+
 if(len(states_url) > 0):
 	for each_state_url in states_url:
 		print("Working for :"+str(each_state_url))
