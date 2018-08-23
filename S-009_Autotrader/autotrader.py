@@ -28,35 +28,42 @@ except Exception as e:
 	print("Could not connect to Database")
 	sys.exit()
 try:
-	select_query = "select zip, radius, startyear, endyear, make, model, trim from search"
+	select_query = "select zip, radius, startyear, endyear, make, model, trim, id, url from search"
 	cur.execute(select_query)
 	if(cur.rowcount > 0):
 		search_result = cur.fetchall()
 		for each_search in search_result:
 			try:
-				zipp = ""
-				radius = ""
-				startyear = ""
-				endyear = ""
-				make = ""
-				model = ""
-				trim = ""
-				if(each_search[0]):
-					zipp = each_search[0]
-				if(each_search[1]):
-					radius = each_search[1]
-				if(each_search[2]):
-					startyear = each_search[2]
-				if(each_search[3]):
-					endyear = each_search[3]
-				if(each_search[4]):
-					make = each_search[4]
-				if(each_search[5]):
-					model = each_search[5]
-				if(each_search[6]):
-					trim = each_search[6]
+				if(each_search[8] is not None and each_search[8] != ""):
+					url_created = str(each_search[8])
+					print('h')
+				else:
+					zipp = ""
+					radius = ""
+					startyear = ""
+					endyear = ""
+					make = ""
+					model = ""
+					trim = ""
+					if(each_search[0]):
+						zipp = each_search[0]
+					if(each_search[1]):
+						radius = each_search[1]
+					if(each_search[2]):
+						startyear = each_search[2]
+					if(each_search[3]):
+						endyear = each_search[3]
+					if(each_search[4]):
+						make = each_search[4]
+					if(each_search[5]):
+						model = each_search[5]
+					if(each_search[6]):
+						trim = each_search[6]
+					url_created = "http://www.autotrader.com/cars-for-sale/searchresults.xhtml?zip="+str(zipp)+"&startYear="+str(startyear)+"&endYear="+str(endyear)+"&makeCodeList="+str(make)+"&searchRadius="+str(radius)+"&modelCodeList="+str(model)+"&trimCodeList="+str(trim)+"&sortBy=derivedpriceASC&numRecords=100&firstRecord=0"
+					sql_update_search = "update search set url = '"+str(url_created)+"' where id = '"+str(each_search[7])+"'"
+					cur.execute(sql_update_search)
+					conn.commit()
 
-				url_created = "http://www.autotrader.com/cars-for-sale/searchresults.xhtml?zip="+str(zipp)+"&startYear="+str(startyear)+"&endYear="+str(endyear)+"&makeCodeList="+str(make)+"&searchRadius="+str(radius)+"&modelCodeList="+str(model)+"&trimCodeList="+str(trim)+"&sortBy=derivedpriceASC&numRecords=100&firstRecord=0"
 				print("Working for url - "+url_created)
 				time.sleep(interval)
 				response = requests.get(url_created)

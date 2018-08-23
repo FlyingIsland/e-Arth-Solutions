@@ -94,7 +94,7 @@ CREATE TABLE `search` (
   `make` varchar(200) DEFAULT NULL,
   `model` varchar(200) DEFAULT NULL,
   `trim` varchar(200) DEFAULT NULL,
-  `url` varchar(200) DEFAULT NULL,
+  `url` varchar(500) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
