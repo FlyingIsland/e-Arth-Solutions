@@ -36,7 +36,6 @@ try:
 			try:
 				if(each_search[8] is not None and each_search[8] != ""):
 					url_created = str(each_search[8])
-					print('h')
 				else:
 					zipp = ""
 					radius = ""
