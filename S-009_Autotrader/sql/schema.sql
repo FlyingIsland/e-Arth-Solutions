@@ -34,10 +34,12 @@ CREATE TABLE `listing` (
   `exterior` varchar(300) DEFAULT NULL,
   `stock` varchar(300) DEFAULT NULL,
   `vin` varchar(300) DEFAULT NULL,
+  `search` int(50) unsigned NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  KEY `search_idfk` (`search`),
+  CONSTRAINT `search_idfk` FOREIGN KEY (`search`) REFERENCES `search` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -63,8 +65,7 @@ CREATE TABLE `price` (
   `price` varchar(200) DEFAULT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  UNIQUE KEY `listing_UNIQUE` (`listing`),
+  KEY `price_ibfk_1` (`listing`),
   CONSTRAINT `price_ibfk_1` FOREIGN KEY (`listing`) REFERENCES `listing` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

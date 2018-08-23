@@ -34,6 +34,7 @@ try:
 		search_result = cur.fetchall()
 		for each_search in search_result:
 			try:
+				search_id = str(each_search[7])
 				if(each_search[8] is not None and each_search[8] != ""):
 					url_created = str(each_search[8])
 				else:
@@ -59,7 +60,7 @@ try:
 					if(each_search[6]):
 						trim = each_search[6]
 					url_created = "http://www.autotrader.com/cars-for-sale/searchresults.xhtml?zip="+str(zipp)+"&startYear="+str(startyear)+"&endYear="+str(endyear)+"&makeCodeList="+str(make)+"&searchRadius="+str(radius)+"&modelCodeList="+str(model)+"&trimCodeList="+str(trim)+"&sortBy=derivedpriceASC&numRecords=100&firstRecord=0"
-					sql_update_search = "update search set url = '"+str(url_created)+"' where id = '"+str(each_search[7])+"'"
+					sql_update_search = "update search set url = '"+str(url_created)+"' where id = '"+str(search_id)+"'"
 					cur.execute(sql_update_search)
 					conn.commit()
 
@@ -145,7 +146,7 @@ try:
 									print(price)
 									print(count)
 									print("-----------")
-									sql_insert_update_listing = "insert into listing (id, url, text, mileage, interior, exterior, stock, vin) values ('"+str(iisting_id	)+"', '"+str(url)+"', '"+str(text)+"', '"+str(mil_value)+"', '"+str(int_value)+"', '"+str(ext_value)+"', '"+str(stk_value)+"', '"+str(vin_value)+"') ON DUPLICATE KEY UPDATE id = values(id),url = values(url),text = values(text),mileage = values(mileage),interior = values(interior),exterior = values(exterior),stock = values(stock),vin = values(vin)"
+									sql_insert_update_listing = "insert into listing (id, url, text, mileage, interior, exterior, stock, vin, search) values ('"+str(iisting_id	)+"', '"+str(url)+"', '"+str(text)+"', '"+str(mil_value)+"', '"+str(int_value)+"', '"+str(ext_value)+"', '"+str(stk_value)+"', '"+str(vin_value)+"', '"+str(search_id)+"') ON DUPLICATE KEY UPDATE id = values(id),url = values(url),text = values(text),mileage = values(mileage),interior = values(interior),exterior = values(exterior),stock = values(stock),vin = values(vin)"
 									cur.execute(sql_insert_update_listing)
 									conn.commit()
 									sql_insert_update_price = "insert into price (listing, price) values ('"+str(iisting_id)+"', '"+str(price)+"') ON DUPLICATE KEY UPDATE listing = values(listing), price = values(price)"
