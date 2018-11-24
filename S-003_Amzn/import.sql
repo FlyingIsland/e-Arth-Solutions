@@ -1,4 +1,4 @@
-LOAD DATA INFILE './Inventory.csv'
-INTO TABLE your_temp_table
+LOAD DATA LOCAL INFILE './Inventory.csv'
+INTO TABLE product
 FIELDS TERMINATED BY ','
-(id, product, sku, department, quantity); 
+(asin); 
