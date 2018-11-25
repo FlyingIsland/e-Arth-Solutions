@@ -16,6 +16,7 @@ def build_arg_parser():
 	parser.add_argument("-password","--password", help="DB password",type=str, required='True')
 	parser.add_argument("-database","--database", help="DB name",type=str, required='True')
 	parser.add_argument("-interval","--interval", help="time internal after each request",type=int, default=5)
+	parser.add_argument("-skipcity","--skipcity", help="Skip getting city",type=int, required='True', default=0)
 	return vars(parser.parse_args())
 
 arguments = build_arg_parser()
@@ -30,58 +31,62 @@ except Exception as e:
 	sys.exit()
 print("Starting Data extraction for the State and Cities")
 
-states_url = []
-base_url = 'https://www.greatschools.org'
-first_state_url = arguments['url']
-states_url.append(first_state_url)
-response = requests.get(first_state_url)
-html = response.content
-soup = BeautifulSoup(html,'html.parser')
-drop_down = soup.find("select", {"id": "dropdown_menu"})
-if(drop_down):
-	options = drop_down.findAll("option")
-	for each_option in options:
-		# option_value = each_option.find("option")
-		start = str(each_option).find('value="')
-		end_to = str(each_option).find('">')
-		if(start > 1 and end_to > 1):
-			start_from = start + 7
-			complete_url = base_url + str(each_option)[start_from:end_to]
-			states_url.append(complete_url)
+if(arguments['skipcity'] != 1):
+	states_url = []
+	base_url = 'https://www.greatschools.org'
+	first_state_url = arguments['url']
+	states_url.append(first_state_url)
+	response = requests.get(first_state_url)
+	html = response.content
+	soup = BeautifulSoup(html,'html.parser')
+	drop_down = soup.find("select", {"id": "dropdown_menu"})
+	if(drop_down):
+		options = drop_down.findAll("option")
+		for each_option in options:
+			# option_value = each_option.find("option")
+			start = str(each_option).find('value="')
+			end_to = str(each_option).find('">')
+			if(start > 1 and end_to > 1):
+				start_from = start + 7
+				complete_url = base_url + str(each_option)[start_from:end_to]
+				states_url.append(complete_url)
 
-if(len(states_url) > 0):
-	for each_state_url in states_url:
-		print("Working for :"+str(each_state_url))
-		splited_url = each_state_url.split('/')
-		if(len(splited_url) == 8):
-			state = splited_url[5]
-			state_abbr = splited_url[6]
-		else:
-			state = ''
-			state_abbr = ''
-		state_url = each_state_url
-		time.sleep(interval)
-		response = requests.get(each_state_url)
-		html = response.content
-		soup = BeautifulSoup(html,'html.parser')
-		table_tr = soup.find("table").findAll('tr')
-		for each_tr in table_tr:
-			td_row = each_tr.find('td')
-			if(td_row):
-				a_td = td_row.find('a')
-				if(a_td):
-					if(a_td['href']):
-						city_url = a_td['href']
-						splited_city_url = city_url.split('/')
-						if(len(splited_city_url) == 6):
-							city = splited_city_url[4]
-						else:
-							city = ""
-						sql_insert_update = "insert into city (state, state_abbr, state_url, city, city_url) values ('"+state.replace("'","")+"', '"+state_abbr.replace("'","")+"', '"+state_url.replace("'","")+"', '"+city.replace("'","")+"', '"+city_url.replace("'","")+"') ON DUPLICATE KEY UPDATE state = values(state), state_abbr = values(state_abbr), state_url = values(state_url), city = values(city), city_url = values(city_url)"
-						cur.execute(sql_insert_update)
-						conn.commit()
+	if(len(states_url) > 0):
+		for each_state_url in states_url:
+			print("Working for :"+str(each_state_url))
+			splited_url = each_state_url.split('/')
+			if(len(splited_url) == 8):
+				state = splited_url[5]
+				state_abbr = splited_url[6]
+			else:
+				state = ''
+				state_abbr = ''
+			state_url = each_state_url
+			time.sleep(interval)
+			response = requests.get(each_state_url)
+			html = response.content
+			soup = BeautifulSoup(html,'html.parser')
+			table_tr = soup.find("table").findAll('tr')
+			for each_tr in table_tr:
+				td_row = each_tr.find('td')
+				if(td_row):
+					a_td = td_row.find('a')
+					if(a_td):
+						if(a_td['href']):
+							city_url = a_td['href']
+							splited_city_url = city_url.split('/')
+							if(len(splited_city_url) == 6):
+								city = splited_city_url[4]
+							else:
+								city = ""
+							sql_insert_update = "insert into city (state, state_abbr, state_url, city, city_url) values ('"+state.replace("'","")+"', '"+state_abbr.replace("'","")+"', '"+state_url.replace("'","")+"', '"+city.replace("'","")+"', '"+city_url.replace("'","")+"') ON DUPLICATE KEY UPDATE state = values(state), state_abbr = values(state_abbr), state_url = values(state_url), city = values(city), city_url = values(city_url)"
+							cur.execute(sql_insert_update)
+							conn.commit()
 
-print("Completed the State and Cities Data Extraction. Now extracting School data whose list_school = 1")
+	print("Completed the State and Cities Data Extraction. Now extracting School data whose list_school = 1")
+else:
+	print("Skipped City Extraction Part. Extracting School data whose list_school = 1")
+
 select_list_school = "select id, city_url from city where list_school = 1"
 cur.execute(select_list_school)
 if(cur.rowcount > 0):
