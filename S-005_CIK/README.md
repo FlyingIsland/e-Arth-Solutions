@@ -3,3 +3,8 @@ python cik_extract.py --user root --database earth --host localhost --port 3306 
 
 python cik_extract.py --user root --database earth --host localhost --port 3306 --password root --state VT
 
+
+Install required Packages Commands:
+sudo pip2 install scrapy
+sudo pip2 install pymysql
+sudo pip2 install -U pyasn1
