@@ -84,6 +84,7 @@ CREATE TABLE `school` (
   `student_ethnicities_american_indian_alaska_native` varchar(100) DEFAULT NULL,
   `student_ethnicities_hawaiian_native_pacific_islander` varchar(100) DEFAULT NULL,
   `student_ethnicities_asian_or_pacific_islander` varchar(100) DEFAULT NULL,
+  `student_ethnicities_asian_or_asian_pacific_islander` varchar(100) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

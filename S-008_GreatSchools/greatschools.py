@@ -108,13 +108,13 @@ if(cur.rowcount > 0):
 					for each in splited:
 						if("gon.search" in each):
 							gon_search = each
-					gon_search_splited = gon_search.split("=")
-					if(len(gon_search_splited) > 0):
-						gon_search = gon_search_splited[1]
-					else:
-						print("Not able to extract for "+str(url_to_search))
-						continue
-					d = json.loads(gon_search)
+					gon_search_splited = gon_search.replace('gon.search=',"")
+					#if(len(gon_search_splited) > 0):
+					#	gon_search = gon_search_splited[1]
+					#else:
+					#	print("Not able to extract for "+str(url_to_search))
+					#	continue
+					d = json.loads(gon_search_splited)
 					if(len(d['schools']) > 0):
 						for table_row in d['schools']:
 							school_details = []
@@ -283,6 +283,7 @@ if(cur.rowcount > 0):
 								student_ethnicities_american_indian_alaska_native = ""
 								student_ethnicities_hawaiian_native_pacific_islander = ""
 								student_ethnicities_asian_or_pacific_islander = ""
+								student_ethnicities_asian_or_asian_pacific_islander = ""
 								try:
 									cdata = soup.find(text=re.compile("CDATA"))
 									splited = cdata.split(";")
@@ -326,6 +327,9 @@ if(cur.rowcount > 0):
 													elif(each_ethnicity['breakdown'] == 'Asian or Pacific Islander'):
 														if("school_value" in each_ethnicity):
 															student_ethnicities_asian_or_pacific_islander = each_ethnicity['school_value']
+													elif(each_ethnicity['breakdown'] == 'Asian or Asian/Pacific Islander'):
+														if("school_value" in each_ethnicity):
+															student_ethnicities_asian_or_asian_pacific_islander = each_ethnicity['school_value']
 													else:
 														print("Found new student_ethnicities : ")
 														print(each_ethnicity)
@@ -366,8 +370,9 @@ if(cur.rowcount > 0):
 							school_details.append(student_ethnicities_american_indian_alaska_native)
 							school_details.append(student_ethnicities_hawaiian_native_pacific_islander)
 							school_details.append(student_ethnicities_asian_or_pacific_islander)
+							school_details.append(student_ethnicities_asian_or_asian_pacific_islander)
 							# print(school_details)
-							sql_insert_update_school = "insert into school (name, school_url, address, schooltype, grades, review_stars, reviews_count, enrollment, students_per_teacher, district, test_scores, academic_progress, equity_overview, student_low_income, students_gender_male, student_ethnicities_asian, student_ethnicities_filipino, student_ethnicities_hispanic, student_ethnicities_two_or_more_races, student_ethnicities_white, student_ethnicities_black, student_ethnicities_pacific_Islander, student_ethnicities_american_indian_alaska_native, student_ethnicities_hawaiian_native_pacific_islander, student_ethnicities_asian_or_pacific_islander) values ('"+str(name).replace("'","")+"','"+str(school_url).replace("'","")+"','"+str(address).replace("'","")+"','"+str(schooltype).replace("'","")+"','"+str(grades).replace("'","")+"','"+str(review_stars).replace("'","")+"','"+str(reviews_count).replace("'","")+"','"+str(enrollment).replace("'","")+"','"+str(students_per_teacher).replace("'","")+"','"+str(district).replace("'","")+"','"+str(test_scores).replace("'","")+"','"+str(academic_progress).replace("'","")+"','"+str(equity_overview).replace("'","")+"','"+str(student_low_income).replace("'","")+"','"+str(students_gender_male).replace("'","")+"','"+str(student_ethnicities_asian).replace("'","")+"','"+str(student_ethnicities_filipino).replace("'","")+"','"+str(student_ethnicities_hispanic).replace("'","")+"','"+str(student_ethnicities_two_or_more_races).replace("'","")+"','"+str(student_ethnicities_white).replace("'","")+"','"+str(student_ethnicities_black).replace("'","")+"','"+str(student_ethnicities_pacific_Islander).replace("'","")+"','"+str(student_ethnicities_american_indian_alaska_native).replace("'","")+"','"+str(student_ethnicities_hawaiian_native_pacific_islander).replace("'","")+"','"+str(student_ethnicities_asian_or_pacific_islander).replace("'","")+"') ON DUPLICATE KEY UPDATE name = values(name),school_url = values(school_url),address = values(address),schooltype = values(schooltype),grades = values(grades),review_stars = values(review_stars),reviews_count = values(reviews_count),enrollment = values(enrollment),students_per_teacher = values(students_per_teacher),district = values(district),test_scores = values(test_scores),academic_progress = values(academic_progress),equity_overview = values(equity_overview),student_low_income = values(student_low_income),students_gender_male = values(students_gender_male),student_ethnicities_asian = values(student_ethnicities_asian),student_ethnicities_filipino = values(student_ethnicities_filipino),student_ethnicities_hispanic = values(student_ethnicities_hispanic),student_ethnicities_two_or_more_races = values(student_ethnicities_two_or_more_races),student_ethnicities_white = values(student_ethnicities_white),student_ethnicities_black = values(student_ethnicities_black),student_ethnicities_pacific_Islander = values(student_ethnicities_pacific_Islander),student_ethnicities_american_indian_alaska_native = values(student_ethnicities_american_indian_alaska_native), student_ethnicities_asian_or_pacific_islander = values(student_ethnicities_asian_or_pacific_islander)"
+							sql_insert_update_school = "insert into school (name, school_url, address, schooltype, grades, review_stars, reviews_count, enrollment, students_per_teacher, district, test_scores, academic_progress, equity_overview, student_low_income, students_gender_male, student_ethnicities_asian, student_ethnicities_filipino, student_ethnicities_hispanic, student_ethnicities_two_or_more_races, student_ethnicities_white, student_ethnicities_black, student_ethnicities_pacific_Islander, student_ethnicities_american_indian_alaska_native, student_ethnicities_hawaiian_native_pacific_islander, student_ethnicities_asian_or_pacific_islander, student_ethnicities_asian_or_asian_pacific_islander) values ('"+str(name).replace("'","")+"','"+str(school_url).replace("'","")+"','"+str(address).replace("'","")+"','"+str(schooltype).replace("'","")+"','"+str(grades).replace("'","")+"','"+str(review_stars).replace("'","")+"','"+str(reviews_count).replace("'","")+"','"+str(enrollment).replace("'","")+"','"+str(students_per_teacher).replace("'","")+"','"+str(district).replace("'","")+"','"+str(test_scores).replace("'","")+"','"+str(academic_progress).replace("'","")+"','"+str(equity_overview).replace("'","")+"','"+str(student_low_income).replace("'","")+"','"+str(students_gender_male).replace("'","")+"','"+str(student_ethnicities_asian).replace("'","")+"','"+str(student_ethnicities_filipino).replace("'","")+"','"+str(student_ethnicities_hispanic).replace("'","")+"','"+str(student_ethnicities_two_or_more_races).replace("'","")+"','"+str(student_ethnicities_white).replace("'","")+"','"+str(student_ethnicities_black).replace("'","")+"','"+str(student_ethnicities_pacific_Islander).replace("'","")+"','"+str(student_ethnicities_american_indian_alaska_native).replace("'","")+"','"+str(student_ethnicities_hawaiian_native_pacific_islander).replace("'","")+"','"+str(student_ethnicities_asian_or_pacific_islander).replace("'","")+"','"+str(student_ethnicities_asian_or_asian_pacific_islander).replace("'","")+"') ON DUPLICATE KEY UPDATE name = values(name),school_url = values(school_url),address = values(address),schooltype = values(schooltype),grades = values(grades),review_stars = values(review_stars),reviews_count = values(reviews_count),enrollment = values(enrollment),students_per_teacher = values(students_per_teacher),district = values(district),test_scores = values(test_scores),academic_progress = values(academic_progress),equity_overview = values(equity_overview),student_low_income = values(student_low_income),students_gender_male = values(students_gender_male),student_ethnicities_asian = values(student_ethnicities_asian),student_ethnicities_filipino = values(student_ethnicities_filipino),student_ethnicities_hispanic = values(student_ethnicities_hispanic),student_ethnicities_two_or_more_races = values(student_ethnicities_two_or_more_races),student_ethnicities_white = values(student_ethnicities_white),student_ethnicities_black = values(student_ethnicities_black),student_ethnicities_pacific_Islander = values(student_ethnicities_pacific_Islander),student_ethnicities_american_indian_alaska_native = values(student_ethnicities_american_indian_alaska_native), student_ethnicities_asian_or_pacific_islander = values(student_ethnicities_asian_or_pacific_islander), student_ethnicities_asian_or_asian_pacific_islander = values(student_ethnicities_asian_or_asian_pacific_islander)"
 
 							cur.execute(sql_insert_update_school)
 							conn.commit()
