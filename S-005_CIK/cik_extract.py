@@ -110,7 +110,7 @@ if(len(all_data) > 0):
 		try:
 			sql_insert = 'insert into company (cik, name, state, sic) values ("'+str(cik_to_update).replace('"',"'")+'", "'+str(company_to_update).replace('"',"'")+'", "'+str(state_to_update).replace('"',"'")+'", "'+str(sic_to_update)+'") ON DUPLICATE KEY UPDATE cik = values(cik), name = values(name), state = values(state)'
 			# sql_insert = "insert into company (cik, name, state, sic) values ('"+str(cik_to_update)+"', '"+str(company_to_update)+"', '"+str(state_to_update)+"', '"+str(sic_to_update)+"') ON DUPLICATE KEY UPDATE cik = values(cik), name = values(name), state = values(state)"
-			print(cur.execute(sql_insert))
+			cur.execute(sql_insert)
 			conn.commit()
 		except Exception as e:
 			print(e)
