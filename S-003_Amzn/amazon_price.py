@@ -37,7 +37,7 @@ def product_page(asin):
 	response = requests.get(product_url, headers=uaHeader)
 	print(response.status_code)
 	html = response.content
-	soup = BeautifulSoup(html, 'html.parser')
+	soup = BeautifulSoup(html, 'lxml')
 	data_list = []
 	try:
 		elem1 = soup.find('span', attrs={'id': 'productTitle'})
@@ -73,12 +73,12 @@ def product_page(asin):
 				elem1 = elem1.find(lambda tag:tag.name=="li" and "Shipping Weight" in tag.text)
 			if(elem1.a):
 				elem1.a.decompose()
-       
+	   
 			shipping_weight = elem1.text.strip().replace('Shipping Weight', '')
 			new_shipping_weight = re.sub(r'\(.*\)', '', shipping_weight).replace('\n','').strip(' ')
 			
 		# if(name and weight and package_dimensions and new_shipping_weight):
-		sql_insert = "insert into product (asin, name, weight, package_dimensions, shipping_weight) values ('"+str(asin)+"', '"+str(name)+"', '"+str(weight)+"', '"+str(package_dimensions)+"', '"+str(new_shipping_weight)+"') ON DUPLICATE KEY UPDATE name  = values(name), weight = values(weight), package_dimensions = values(package_dimensions), shipping_weight = values(shipping_weight)"
+		sql_insert = "insert into product (asin, name, weight, package_dimensions, shipping_weight) values ('"+str(asin).replace("'","").strip()+"', '"+str(name).replace("'","").strip()+"', '"+str(weight).replace("'","").strip()+"', '"+str(package_dimensions).replace("'","").strip()+"', '"+str(new_shipping_weight).replace("'","").strip()+"') ON DUPLICATE KEY UPDATE name  = values(name), weight = values(weight), package_dimensions = values(package_dimensions), shipping_weight = values(shipping_weight)"
 		print("Executing product Query")
 		print(cur.execute(sql_insert))
 		conn.commit()
@@ -87,7 +87,7 @@ def product_page(asin):
 		response_offer = requests.get(offer_url, headers=uaHeader)
 		print(response_offer)
 		html_offer = response_offer.content
-		soup_offer = BeautifulSoup(html_offer, 'html.parser')
+		soup_offer = BeautifulSoup(html_offer, 'lxml')
 		data_list = []
 		a = 0
 		all_offers = []
@@ -130,7 +130,7 @@ def product_page(asin):
 				print(seller)
 				
 				if(final_price and condition and seller):
-					sql_insert = "insert into offer (asin, rank, price_with_shipping, `condition`, seller) values ('"+str(asin)+"', '"+str(i)+"', '"+str(final_price).replace(" ", "")+"', '"+str(condition).replace("'","")+"', '"+str(seller).replace("'","")+"') ON DUPLICATE KEY UPDATE rank  = values(rank), price_with_shipping = values(price_with_shipping), `condition` = values(`condition`), seller = values(seller)"
+					sql_insert = "insert into offer (asin, rank, price_with_shipping, `condition`, seller) values ('"+str(asin).replace("'","").strip()+"', '"+str(i).replace("'","").strip()+"', '"+str(final_price).replace(" ", "").replace("'","").strip()+"', '"+str(condition).replace("'","").strip()+"', '"+str(seller).replace("'","").strip()+"') ON DUPLICATE KEY UPDATE rank  = values(rank), price_with_shipping = values(price_with_shipping), `condition` = values(`condition`), seller = values(seller)"
 					# print(sql_insert)
 					print("Executing offer Query")
 					print(cur.execute(sql_insert))
@@ -170,8 +170,8 @@ def sendmail(filenames):
 #			server.starttls()
 #			server.ehlo()
 #			server.login("mahesh.s@e-arth.in", "")
-			text = msg.as_string()
-			server.sendmail(fromaddr, toaddrs, text)
+#			text = msg.as_string()
+#			server.sendmail(fromaddr, toaddrs, text)
 			server.close()
 			return 1
 		else:
@@ -193,13 +193,15 @@ except Exception as e:
 
 asin_query = "select distinct asin from product where active = 1"
 cur.execute(asin_query)
+
 result = cur.fetchall()
 if(cur.rowcount > 0):
 	for asin in result:
-		asin_amazon = asin[0]
-		print(asin_amazon)
-		time.sleep(int(argments['interval']))
-		product_data = product_page(str(asin_amazon))
+		if(asin[0] != 'asin'):
+			asin_amazon = asin[0]
+			print("asin : "+str(asin_amazon))
+			time.sleep(int(argments['interval']))
+			product_data = product_page(str(asin_amazon))
 
 	# try:
 	path = argments['path']
@@ -244,3 +246,5 @@ if(cur.rowcount > 0):
 	# except Exception as e:
 	# 	print("Something went wrong while creating csv and send email")
 	# 	print(str(e))
+
+
