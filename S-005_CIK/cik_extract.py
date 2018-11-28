@@ -11,9 +11,10 @@ import pymysql
 
 class CikExtract(scrapy.Spider):
 	name = 'cikextract'
-	def __init__(self, input_url="", stop_flag = 0):
+	def __init__(self, input_url="", stop_flag = 0, internval = 0):
 		self.input = input_url
 		self.stop_flag = stop_flag
+		self.interval = interval
 
 	def start_requests(self):
 		url = self.input
@@ -22,6 +23,7 @@ class CikExtract(scrapy.Spider):
 			if(self.stop_flag == 0):
 				url_to_search = url+str(offset)+"&count=40&hidefilings=0"
 				offset += 40
+				time.sleep(self.interval)
 				yield self.make_requests_from_url(url_to_search)
 			else:
 				print("Extracting Data Completed")
@@ -53,17 +55,18 @@ def build_arg_parser():
 	parser.add_argument("-port","--port", help="DB port",type=str, required='True')
 	parser.add_argument("-password","--password", help="DB password",type=str, required='True')
 	parser.add_argument("-database","--database", help="DB name",type=str, required='True')
+	parser.add_argument("-i","--interval", help="time internal after each request",type=int, default=5)
 
 	return vars(parser.parse_args())
 
 arguments = build_arg_parser()
-
 try:
 	conn = pymysql.connect(user = str(arguments['user']), port = int(arguments['port']), database = arguments['database'], host = arguments['host'], password = arguments['password'])
 	cur = conn.cursor()
 except Exception as e:
 	print(str(e))
 	sys.exit()
+interval = arguments['interval']
 
 sic = ''
 state = ''
@@ -76,7 +79,7 @@ else:
 	sys.exit()
 
 all_data = []
-print(state)
+
 
 if(sic):
 	search_url = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&SIC="+str(sic)+"&owner=include&match=&start="
@@ -90,7 +93,7 @@ else:
 SETTINGS = {'LOG_ENABLED': False}
 process = CrawlerProcess(SETTINGS)
 x = CikExtract()
-process.crawl(x,search_url, 0)
+process.crawl(x,search_url, 0, int(interval))
 process.start()
 if(len(all_data) > 0):
 	print("Inserting/Updating Records in Table")
@@ -107,7 +110,7 @@ if(len(all_data) > 0):
 		try:
 			sql_insert = 'insert into company (cik, name, state, sic) values ("'+str(cik_to_update).replace('"',"'")+'", "'+str(company_to_update).replace('"',"'")+'", "'+str(state_to_update).replace('"',"'")+'", "'+str(sic_to_update)+'") ON DUPLICATE KEY UPDATE cik = values(cik), name = values(name), state = values(state)'
 			# sql_insert = "insert into company (cik, name, state, sic) values ('"+str(cik_to_update)+"', '"+str(company_to_update)+"', '"+str(state_to_update)+"', '"+str(sic_to_update)+"') ON DUPLICATE KEY UPDATE cik = values(cik), name = values(name), state = values(state)"
-			cur.execute(sql_insert)
+			print(cur.execute(sql_insert))
 			conn.commit()
 		except Exception as e:
 			print(e)
