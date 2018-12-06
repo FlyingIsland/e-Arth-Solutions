@@ -41,11 +41,13 @@ else:
 
 file_path = abspath(getsourcefile(lambda _: None))
 file_dir = os.path.normpath(file_path + os.sep + os.pardir)
-
 chromedriver = file_dir + "/chromedriver"
 os.environ["webdriver.chrome.driver"] = chromedriver
 
-driver = webdriver.Chrome(chromedriver)
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--no-sandbox')
+
+driver = webdriver.Chrome(chromedriver,chrome_options=chrome_options)
 driver.get("https://accounts.craigslist.org/login/home")
 
 driver.find_element_by_id('inputEmailHandle').send_keys(email_id)
@@ -62,12 +64,15 @@ except Exception as e:
 time.sleep(2)
 count = 0
 
+active_count = 0
 
 try:
         table = driver.find_element_by_xpath('//*[@id="paginator"]/table')
         for table_rows in table.find_elements_by_tag_name("tr"):
                 for table_data in table_rows.find_elements_by_tag_name("td"):
                         class_name = table_data.get_attribute("class")
+			if(str(class_name) == "status active"):
+				active_count += 1
                         if(str(class_name) == "buttons active"):
                                 button_div = table_data.find_element_by_tag_name('div')
                                 for buttons_forms in button_div.find_elements_by_tag_name('form'):
@@ -82,13 +87,12 @@ except Exception as e:
         time.sleep(2)
 
 
-print("Total Renew Count : "+str(count))
-
 flag = 0
 max_count = 0
 renew_done = 0
 
 postings_renewed = []
+re_new_count = count
 
 while(count != 0 or max_count == 1000):
         max_count += 1
@@ -131,7 +135,7 @@ while(count != 0 or max_count == 1000):
         except Exception as e:
                 continue
 
-print("Total Renew done : "+str(renew_done))
+print("Total Renew Count : "+str(re_new_count)+" Total Renew done : "+str(renew_done)+" Total Active Count : "+str(active_count))
 driver.close()
 ''' Excluding e-mail capability for now
 try:
